@@ -1,0 +1,37 @@
+version: "3.9"
+
+services:
+  php-apache-environment:
+    image: php:7.4-apache
+    container_name: sio-vulnerabilities-php-apache
+    build:
+      context: ./www
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    volumes:
+    - ./www:/var/www/html
+    ports:
+      - 8000:80
+  db:
+    container_name: sio-vulnerabilities-db
+    image: mysql
+    restart: always
+    environment:
+        MYSQL_ROOT_PASSWORD: password
+        MYSQL_DATABASE: sio-vulnerabilities
+        MYSQL_USER: user
+        MYSQL_PASSWORD: password
+    ports:
+        - "9906:3306"
+    volumes:
+      - ./db:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+        - '8080:80'
+    restart: always
+    environment:
+        PMA_HOST: db
+    depends_on:
+        - db
